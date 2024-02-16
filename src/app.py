@@ -22,56 +22,56 @@ def get_vectorstore_from_url(url):
     # get the text in document form
     loader = WebBaseLoader(url)
     document = loader.load()
-    
+
     # split the document into chunks
     text_splitter = RecursiveCharacterTextSplitter()
     document_chunks = text_splitter.split_documents(document)
-    
+
     # create a vectorstore from the chunks
-    #vector_store = Chroma.from_documents(document_chunks, OpenAIEmbeddings())
-    vector_store = Chroma.from_documents(document_chunks, OllamaEmbeddings(base_url="http://localhost:11434", model="mistral"))
+    vector_store = Chroma.from_documents(document_chunks, OpenAIEmbeddings())
+    #vector_store = Chroma.from_documents(document_chunks, OllamaEmbeddings(base_url="http://localhost:11434", model="llama2"))
     return vector_store
 
 def get_context_retriever_chain(vector_store):
-    #llm = ChatOpenAI(model="gpt-4")
-    llm = Ollama(base_url="http://localhost:11434", model="mistral")
-    
+    llm = ChatOpenAI(model="gpt-4")
+    #llm = Ollama(base_url="http://localhost:11434", model="llama2")
+
     retriever = vector_store.as_retriever()
-    
+
     prompt = ChatPromptTemplate.from_messages([
       MessagesPlaceholder(variable_name="chat_history"),
       ("user", "{input}"),
       ("user", "Given the above conversation, generate a search query to look up in order to get information relevant to the conversation")
     ])
-    
+
     retriever_chain = create_history_aware_retriever(llm, retriever, prompt)
-    
+
     return retriever_chain
-    
-def get_conversational_rag_chain(retriever_chain): 
-    
-    #llm = ChatOpenAI(model="gpt-4")
-    llm = Ollama(base_url="http://localhost:11434", model="mistral")
+
+def get_conversational_rag_chain(retriever_chain):
+
+    llm = ChatOpenAI(model="gpt-4")
+    #llm = Ollama(base_url="http://localhost:11434", model="llama2")
 
     prompt = ChatPromptTemplate.from_messages([
       ("system", "Answer the user's questions based on the below context:\n\n{context}"),
       MessagesPlaceholder(variable_name="chat_history"),
       ("user", "{input}"),
     ])
-    
+
     stuff_documents_chain = create_stuff_documents_chain(llm,prompt)
-    
+
     return create_retrieval_chain(retriever_chain, stuff_documents_chain)
 
 def get_response(user_input):
     retriever_chain = get_context_retriever_chain(st.session_state.vector_store)
     conversation_rag_chain = get_conversational_rag_chain(retriever_chain)
-    
+
     response = conversation_rag_chain.invoke({
         "chat_history": st.session_state.chat_history,
         "input": user_query
     })
-    
+
     return response['answer']
 
 # app config
@@ -93,7 +93,7 @@ else:
             AIMessage(content="Hello, I am a bot. How can I help you?"),
         ]
     if "vector_store" not in st.session_state:
-        st.session_state.vector_store = get_vectorstore_from_url(website_url)    
+        st.session_state.vector_store = get_vectorstore_from_url(website_url)
 
     # user input
     user_query = st.chat_input("Type your message here...")
@@ -101,8 +101,8 @@ else:
         response = get_response(user_query)
         st.session_state.chat_history.append(HumanMessage(content=user_query))
         st.session_state.chat_history.append(AIMessage(content=response))
-        
-       
+
+
 
     # conversation
     for message in st.session_state.chat_history:
