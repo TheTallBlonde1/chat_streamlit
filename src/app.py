@@ -123,7 +123,7 @@ if clear_chat:
 
 if load_clicked:
     if not website_url:
-        st.warning("Please enter a website URL before loading.")
+        st.warning("Please enter a valid website URL to load content.")
     else:
         with st.spinner("Loading website and building memory..."):
             st.session_state.vector_store = get_vectorstore_from_url(
