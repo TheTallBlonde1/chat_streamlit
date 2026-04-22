@@ -1,14 +1,15 @@
-# Chat with a Website from URL - LangChain Chatbot with Streamlit GUI
+# Interactive Website Chatbot with Memory (LangChain + Streamlit)
 
-Welcome to the GitHub repository for the LangChain Chatbot with Streamlit GUI! This project is a comprehensive guide to building a chatbot capable of interacting with websites, extracting information, and communicating in a user-friendly manner. It leverages the power of LangChain 0.1.0 and integrates it with a Streamlit GUI for an enhanced user experience.
+This project is a Streamlit chatbot that loads a website URL, retrieves relevant context with RAG, and keeps chat memory for a full multi-turn conversation.
 
 🟡 This repository is meant as supporting material for the [Youtube video tutorial](https://youtu.be/bupx08ZgSFg).
 
 ## Features
-- **Website Interaction**: The chatbot uses the latest version of LangChain to interact with and extract information from various websites.
-- **Large Language Model Integration**: Compatibility with models like GPT-4, Mistral, Llama2, and ollama. In this code I am using GPT-4, but you can change it to any other model.
-- **Streamlit GUI**: A clean and intuitive user interface built with Streamlit, making it accessible for users with varying levels of technical expertise.
-- **Python-based**: Entirely coded in Python.
+- **Interactive chat UI** with Streamlit chat components.
+- **Conversation memory** across turns in the active session.
+- **RAG over website content** using LangChain + Chroma.
+- **Configurable modern OpenAI models** (chat + embeddings) from the sidebar.
+- **Python-based** implementation.
 
 ## Brief explanation of how RAG works
 
@@ -26,23 +27,23 @@ git clone [repository-link]
 cd [repository-directory]
 ```
 
-Install the required packages:
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Create your own .env file with the following variables:
+Create a `.env` file:
 
 ```bash
-OPENAI_API_KEY=[your-openai-api-key]
+OPENAI_API_KEY=your-openai-api-key
 ```
 
 ## Usage
-To run the Streamlit app:
+Run the app:
 
 ```bash
-streamlit run app.py
+streamlit run src/app.py
 ```
 
 ## Contributing
