@@ -14,6 +14,9 @@ load_dotenv()
 DEFAULT_MODEL = "gpt-4.1-mini"
 DEFAULT_EMBEDDING_MODEL = "text-embedding-3-small"
 DEFAULT_TEMPERATURE = 0.2
+DEFAULT_CHUNK_SIZE = 1200
+DEFAULT_CHUNK_OVERLAP = 200
+DEFAULT_RETRIEVAL_COUNT = 5
 
 
 def initialize_chat_history():
@@ -27,8 +30,8 @@ def get_vectorstore_from_url(url: str, embedding_model: str):
     documents = loader.load()
 
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1200,
-        chunk_overlap=200,
+        chunk_size=DEFAULT_CHUNK_SIZE,
+        chunk_overlap=DEFAULT_CHUNK_OVERLAP,
     )
     chunks = splitter.split_documents(documents)
 
@@ -37,7 +40,7 @@ def get_vectorstore_from_url(url: str, embedding_model: str):
 
 
 def build_retriever_chain(vector_store, llm):
-    retriever = vector_store.as_retriever(search_kwargs={"k": 5})
+    retriever = vector_store.as_retriever(search_kwargs={"k": DEFAULT_RETRIEVAL_COUNT})
     prompt = ChatPromptTemplate.from_messages(
         [
             MessagesPlaceholder(variable_name="chat_history"),
