@@ -125,16 +125,21 @@ if load_clicked:
     if not website_url:
         st.warning("Please enter a valid website URL to load content.")
     else:
-        with st.spinner("Loading website and building memory..."):
-            st.session_state.vector_store = get_vectorstore_from_url(
-                website_url, embedding_model
-            )
-        st.session_state.loaded_url = website_url
-        st.session_state.model_name = model_name
-        st.session_state.embedding_model = embedding_model
-        st.session_state.temperature = temperature
-        initialize_chat_history()
-        st.success("Website loaded. Ask a question below.")
+        try:
+            with st.spinner("Loading website and building memory..."):
+                new_vector_store = get_vectorstore_from_url(
+                    website_url, embedding_model
+                )
+        except Exception as exc:
+            st.error(f"Failed to load website and build embeddings: {exc}")
+        else:
+            st.session_state.vector_store = new_vector_store
+            st.session_state.loaded_url = website_url
+            st.session_state.model_name = model_name
+            st.session_state.embedding_model = embedding_model
+            st.session_state.temperature = temperature
+            initialize_chat_history()
+            st.success("Website loaded. Ask a question below.")
 
 if st.session_state.vector_store is None:
     st.info("Enter a URL in the sidebar and click 'Load / Refresh Website' to start.")
